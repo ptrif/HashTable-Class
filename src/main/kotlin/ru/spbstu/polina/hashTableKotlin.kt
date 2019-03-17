@@ -2,14 +2,15 @@ package ru.spbstu.polina
 
 import java.util.*
 
+
 //initialCapacity == начальная емкость
-data class Pair<Key, T>(val key: Key, val item: T) //key&value pair
+data class Pair<Key, T>(val key: Key, val item: Int) //key&value pair
 
 
-class HashTable<Key, T : Int> {//or Any? uhm.. inline for what???
+class HashTable<Key, T> {//or Any? uhm.. inline for what???
 
-    private val length = 16               //full length of the table, guess it's standard
-    var size = 0                         // count how many pairs do we have
+    private val length = 16                       //full length of the table, guess it's standard
+    var size = 0                                 // count how many pairs do we have not sure if i even need it
     private val table = Array<ArrayList<Pair<Key, T>>>(length) {
         //init
         ArrayList<Pair<Key, T>>(0)
@@ -25,74 +26,72 @@ class HashTable<Key, T : Int> {//or Any? uhm.. inline for what???
     indexOf - look for it
     */
 
-    fun put(key: Key, item: Int) {
+    fun put(key: Key, element: Pair<Key, T>) {
         val index = hash(key)
         val arrayList = table[index]
-        for (element in arrayList)
-            if (arrayList.indexOf(element) == -1) // check if we have this element in a HashTable
-                arrayList += element             // if element not found - arrayList.add(element)
-            else                                // if it found - replace
-                arrayList[index] = element     //arrayList.set(index, element)
+
+        if (arrayList.indexOf(element) == -1) {
+            arrayList += element
+        } else {
+            for (el in arrayList)
+                arrayList[index] = element
+        }
 
         size++
 
     }
 
 
-    /*
+    /* its strange
+       in theory this one is better, but in fact i dont understand how to write it properly
+       properly = return an Int, not a null
      delete by given key
      defaultReturn is what it will return if it fails
-    */
-    /* fun remove(key: Key, defaultReturn: T? = null): T? {
+
+     fun remove(key: Key): Int? {
          val index = hash(key)
          val iter = table[index].iterator()
-         while (iter.hasNext()) {
+        while (iter.hasNext()) {
              val pair1 = iter.next()
-             if (pair1.key != key) continue
+             if (pair1.key == key){
              iter.remove()
+             println(pair1.item)
              return pair1.item
          }
+        }
+      return null
+     }*/
 
-         return defaultReturn
-     }
- */
     /*
     remove method
     based on boolean
-    fun tries to remove an element from HashTable
+    remove method works on keys
+    kToRemove = given key that needs to be removed
     success == true
     fail == false
-    */
-    fun remove(key: Key, V: Pair<Key, T>) {// specify try to remove by ONLY given key, not the whole elToRemove
+*/
+    fun remove(key: Key, kToRemove: Key) {
         val index = hash(key)
         val arrayList = table[index]
-        val elToRemove = V
         for (element in arrayList)
-            if (arrayList.indexOf(element) == arrayList.indexOf(elToRemove))
+            if (arrayList.indexOf(element) == kToRemove)
                 arrayList.remove(element)
+
     }
 
-    /*
-     Searches for an element in HashTable by a given key
-     well, maybe indexOf will save me another time
-     if we have an element returns TRUE
-     if not - FALSE
-    */
 
-    fun get(key: Key, v: Key) {//boolean
+    fun search(key: Key, element: Pair<Key, T>): Boolean {
         val index = hash(key)
-        val arrayList = table[index]
-        val givenKey = hash(v)
-        for (element in arrayList)
-            arrayList.indexOf(element) == givenKey
 
+        val arrayList = table[index]
+
+        return arrayList.contains(element)
     }
 
     /*
     compare two HashTables
     hashtable1.equals(hashtable2)
     */
-
     fun equals(otherTable: ArrayList<Pair<Key, T>>): Boolean =
         table == otherTable
 
