@@ -4,12 +4,12 @@ import java.util.*
 
 
 //initialCapacity == начальная емкость
-data class Pair<Key, T>(val key: Key, val item: Int) //key&value pair
+data class Pair<Key, Int>(val key: Key, val item: Int) //key&value pair
 
 
 class HashTable<Key, T> {//or Any? uhm.. inline for what???
 
-    private val length = 16                       //full length of the table, guess it's standard
+    private var length = 16                       //full length of the table, guess it's standard
     var size = 0                                 // count how many pairs do we have not sure if i even need it
     private val table = Array<ArrayList<Pair<Key, T>>>(length) {
         //init
@@ -26,18 +26,31 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     indexOf - look for it
     */
 
-    fun put(key: Key, element: Pair<Key, T>) {
+    fun put(key: Key, item: T) {
         val index = hash(key)
         val arrayList = table[index]
+        val elToAdd = Pair(key, item)
 
-        if (arrayList.indexOf(element) == -1) {
-            arrayList += element
+
+        //arrayOf(1,2,3).indexOfFirst { it == 2 }
+        if (elToAdd.key != arrayList.indexOfFirst { it == key }) {
+
+            arrayList += elToAdd
+            size++
+
         } else {
-            for (el in arrayList)
-                arrayList[index] = element
+            arrayList[index] = elToAdd
         }
 
-        size++
+        /* if (arrayList.indexOf(elToAdd) == -1) { //indexOf - nnot help
+             //предикат
+                                                //айти в массиве функцию которая поможет нати по предикату
+             arrayList += elToAdd
+             size++
+         } else {
+             arrayList[index] = elToAdd
+
+         }*/
 
     }
 
@@ -70,36 +83,55 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     success == true
     fail == false
 */
-    fun remove(key: Key, kToRemove: Key) {
+    fun remove(key: Key, item: T) {
         val index = hash(key)
         val arrayList = table[index]
-        for (element in arrayList)
-            if (arrayList.indexOf(element) == kToRemove)
-                arrayList.remove(element)
+        val elToRemove = Pair(key, item)
+
+        if (arrayList.indexOf(elToRemove) != -1)
+            arrayList.remove(elToRemove)
+        size--
+/*for (element in arrayList) {
+    if (arrayList.indexOf(element) == 1)
+        arrayList.remove(element)
+}*/
 
     }
 
 
-    fun search(key: Key, element: Pair<Key, T>): Boolean {
+    fun search(key: Key, item: T): Boolean { //look carefully
         val index = hash(key)
+        val elToSearch = Pair(key, item)
 
         val arrayList = table[index]
+        var result = false
 
-        return arrayList.contains(element)
+        if (arrayList.contains(elToSearch)) result = true
+
+        return result
     }
 
     /*
     compare two HashTables
     hashtable1.equals(hashtable2)
     */
-    fun equals(otherTable: ArrayList<Pair<Key, T>>): Boolean =
-        table == otherTable
+    fun equals(otherTable: Array<ArrayList<Pair<Key, T>>>, key: Key): Boolean { // = table == othertable
+        val index = hash(key)
+        val arrayList = table[index]
+        val arrayList2 = otherTable[index]
+        println(arrayList)
+        println(arrayList2)
+        var res = false
+        if (arrayList.equals(arrayList2)) res = true
+        return res
+
+    }
 
 
     /*
-      hashObject of Int using hashcode() fun
-      I  think it's kinda OK...not great but it works
-     */
+    hashObject of Int using hashcode() fun
+    I  think it's kinda OK...not great but it works
+    */
     private fun hash(obj: Key): Int {
 
         if (obj == null) return -1 //nope to null value
@@ -108,4 +140,5 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
 
         return intObject % length //return hash
     }
+
 }
