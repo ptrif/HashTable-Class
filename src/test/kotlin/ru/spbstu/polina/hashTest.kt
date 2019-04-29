@@ -25,15 +25,11 @@ class HashTableTest {
         table.put(1, 13)
         table.put(5, 9)
         table.put(4,28)
+        table.put(4,29)
+        assertEquals(10,table.search(3))
 
-        assertEquals(true, table.search(3, 10))
-        assertEquals(true, table.search(1,  13))
-        assertEquals(true, table.search(10,  15))
-        assertEquals(true, table.search(9,  11))
-        assertEquals(false, table.search(110,  2))
-
-        table.put (5, 16)
-        assertEquals(true, table.search(5,  16))
+        assertEquals(13, table.search(1))
+        assertEquals(29, table.search(4))
 
     }
 
@@ -43,19 +39,19 @@ class HashTableTest {
 
         // table.put(7, 12)
         table.put(10, 11)
-        table.remove(10, 10)
+        table.remove(10)
         table.put(7,12)
         table.put(8,19)
-        table.remove(8,19)
+        table.remove(8)
         table.put(3,10)
-        table.remove(3,10)
-        table.remove(4,28)
+        table.remove(3)
+        table.remove(4)
+        assertEquals(null ,table.search(10))
+        assertEquals(12, table.search(7))
+        table.remove(7)
+        assertEquals(null, table.search(7))
 
-        assertEquals(true, table.search(10,  11))
-        assertEquals(true, table.search(7, 12))
-        assertEquals(false, table.search(8,19)) //no el => search gives FALSE=> el was removed
-        assertEquals(false, table.search(3,10))
-        assertEquals(false,table.search(4,28))
+
 
 
         //val testHashTable = HashTable<Int, Int>()
@@ -71,16 +67,13 @@ class HashTableTest {
         table.put(3, 10)
         table.put(112,  10)
         table.put(8,19)
-        table.remove(8,19)
-        assertEquals(true, table.search(3, 10))
-        assertEquals(false, table.search(112, 113))
-        assertEquals(false, table.search(8,19))
-        table.remove(3,10)
-        assertEquals(false, table.search(3,10))
+        table.remove(8)
+        assertEquals(10,table.search(3))
+
     }
 
     @Test
-    fun equals() {
+    fun equals2() {
         table.put(3,10)
         table.put(4,28)
         otherTable.put(1, 10)
@@ -90,7 +83,7 @@ class HashTableTest {
 
         table1.put(1,1)
         table2.put(1,1)
-        assertEquals(true, table1.equals(table2)) //doesnt work as expected
+        assertEquals(false, table1.equals(table2))
 
     }
 

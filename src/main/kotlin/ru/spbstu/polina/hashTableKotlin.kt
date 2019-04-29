@@ -4,7 +4,7 @@ import java.util.*
 
 
 //initialCapacity == начальная емкость
-data class Pair<Key, Int>(val key: Key, val item: Int) //key&value pair
+data class Pair<Key, T>(val key: Key, var item: T) //key&value pair
 
 
 class HashTable<Key, T> {//or Any? uhm.. inline for what???
@@ -13,10 +13,8 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     var size = 0                                 // count how many pairs do we have not sure if i even need it
     private val table = Array<ArrayList<Pair<Key, T>>>(length) {
         //init
-        ArrayList<Pair<Key, T>>(0)
+        ArrayList(0)
     }
-    //table to arrayList
-    private val indexesRange = table.indices
 
 
     /*
@@ -26,105 +24,82 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     indexOf - look for it
     */
 
+    fun put2(key: Key, item: T) {
+        val index = hash(key)
+        var arrayList = table[index]
+        val elToAdd = Pair(key, item)
+        for (i in arrayList.indices) {
+            if (elToAdd.key == arrayList[i].key) {
+                arrayList[i].item = elToAdd.item
+            } else {
+                arrayList.add(elToAdd)
+                size++
+            }
+
+        }
+
+
+    }
+
     fun put(key: Key, item: T) {
         val index = hash(key)
-        val arrayList = table[index]
+        var arrayList = table[index]
         val elToAdd = Pair(key, item)
 
-
-        //arrayOf(1,2,3).indexOfFirst { it == 2 }
-        if (elToAdd.key != arrayList.indexOfFirst { it == key }) {
-
-            arrayList += elToAdd
-            size++
+        if (elToAdd.key == arrayList.indexOfFirst { it == key }) {
+            val c = arrayList.indexOfFirst { it == key }
+            arrayList[c].item = elToAdd.item
 
         } else {
-            arrayList[index] = elToAdd
+            arrayList.add(elToAdd)
+            size++
         }
+    }
 
-        /* if (arrayList.indexOf(elToAdd) == -1) { //indexOf - nnot help
-             //предикат
-                                                //айти в массиве функцию которая поможет нати по предикату
-             arrayList += elToAdd
-             size++
-         } else {
-             arrayList[index] = elToAdd
 
-         }*/
+    fun remove(key: Key): T? {
+        val index = hash(key)
+        val arrayList = table[index]
+        val iterator = arrayList.iterator()
+        while (iterator.hasNext()) {
+            val next = iterator.next()
+            if (next.key == key) {
+                iterator.remove()
+                size--
+                return next.item
+            }
+        }
+        return null
 
     }
 
 
-    /* its strange
-       in theory this one is better, but in fact i dont understand how to write it properly
-       properly = return an Int, not a null
-     delete by given key
-     defaultReturn is what it will return if it fails
-
-     fun remove(key: Key): Int? {
-         val index = hash(key)
-         val iter = table[index].iterator()
-        while (iter.hasNext()) {
-             val pair1 = iter.next()
-             if (pair1.key == key){
-             iter.remove()
-             println(pair1.item)
-             return pair1.item
-         }
-        }
-      return null
-     }*/
-
-    /*
-    remove method
-    based on boolean
-    remove method works on keys
-    kToRemove = given key that needs to be removed
-    success == true
-    fail == false
-*/
-    fun remove(key: Key, item: T) {
+    // looks for el in arrayList by key
+    fun search(key: Key): T? {
         val index = hash(key)
         val arrayList = table[index]
-        val elToRemove = Pair(key, item)
 
-        if (arrayList.indexOf(elToRemove) != -1)
-            arrayList.remove(elToRemove)
-        size--
-/*for (element in arrayList) {
-    if (arrayList.indexOf(element) == 1)
-        arrayList.remove(element)
-}*/
-
-    }
-
-
-    fun search(key: Key, item: T): Boolean { //look carefully
-        val index = hash(key)
-        val elToSearch = Pair(key, item)
-
-        val arrayList = table[index]
-        var result = false
-
-        if (arrayList.contains(elToSearch)) result = true
-
-        return result
+        return arrayList
+            .firstOrNull { it.key == key }
+            ?.item
     }
 
     /*
     compare two HashTables
     hashtable1.equals(hashtable2)
     */
-    fun equals(otherTable: Array<ArrayList<Pair<Key, T>>>, key: Key): Boolean { // = table == othertable
-        val index = hash(key)
-        val arrayList = table[index]
-        val arrayList2 = otherTable[index]
-        println(arrayList)
-        println(arrayList2)
-        var res = false
-        if (arrayList.equals(arrayList2)) res = true
-        return res
 
+    fun equals2(otherTable: Any): Boolean {
+        if (otherTable is HashTable<*, *> && this.size == otherTable.size) {
+            for (i in 0..this.size - 1) {
+                when {
+                    this.table[i].isEmpty() != otherTable.table[i].isEmpty() -> return false
+                    table[i].isNotEmpty() && this.table.sort() != otherTable.table.sort() -> return false
+                }
+            }
+            return true
+        } else
+            return false
     }
 
 
@@ -134,11 +109,12 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     */
     private fun hash(obj: Key): Int {
 
-        if (obj == null) return -1 //nope to null value
+        if (obj == null) return -1
 
         val intObject = obj.hashCode()
 
         return intObject % length //return hash
     }
+
 
 }
