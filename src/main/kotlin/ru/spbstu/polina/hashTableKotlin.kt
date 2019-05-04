@@ -3,14 +3,14 @@ package ru.spbstu.polina
 import java.util.*
 
 
-//initialCapacity == начальная емкость
+
 data class Pair<Key, T>(val key: Key, var item: T) //key&value pair
 
 
-class HashTable<Key, T> {//or Any? uhm.. inline for what???
+class HashTable<Key, T> {
 
     private var length = 16                       //full length of the table, guess it's standard
-    var size = 0                                 // count how many pairs do we have not sure if i even need it
+    var size = 0
     private val table = Array<ArrayList<Pair<Key, T>>>(length) {
         //init
         ArrayList(0)
@@ -20,42 +20,28 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     /*
     puts(inserts) an element in to the HashTable
     if find - replace
-    add or replace
-    indexOf - look for it
+    if not - add
     */
-
-    fun put2(key: Key, item: T) {
-        val index = hash(key)
-        var arrayList = table[index]
-        val elToAdd = Pair(key, item)
-        for (i in arrayList.indices) {
-            if (elToAdd.key == arrayList[i].key) {
-                arrayList[i].item = elToAdd.item
-            } else {
-                arrayList.add(elToAdd)
-                size++
-            }
-
-        }
-
-
-    }
 
     fun put(key: Key, item: T) {
         val index = hash(key)
-        var arrayList = table[index]
+        val arrayList = table[index]
         val elToAdd = Pair(key, item)
 
-        if (elToAdd.key == arrayList.indexOfFirst { it == key }) {
-            val c = arrayList.indexOfFirst { it == key }
-            arrayList[c].item = elToAdd.item
+        if (-1 == arrayList.indexOfFirst { it.key == key }) {
 
-        } else {
             arrayList.add(elToAdd)
             size++
+
+        } else {
+            val c = arrayList.indexOfFirst { it.key == key }
+            arrayList[c].item = elToAdd.item
         }
     }
 
+    /*
+     removes element by given key
+    */
 
     fun remove(key: Key): T? {
         val index = hash(key)
@@ -74,7 +60,10 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
     }
 
 
-    // looks for el in arrayList by key
+    /* looks for el in arrayList by given key
+       if found - returns item
+       if not - returns null
+    */
     fun search(key: Key): T? {
         val index = hash(key)
         val arrayList = table[index]
@@ -84,28 +73,22 @@ class HashTable<Key, T> {//or Any? uhm.. inline for what???
             ?.item
     }
 
-    /*
-    compare two HashTables
-    hashtable1.equals(hashtable2)
-    */
+    //compare two HashTables
 
-    fun equals2(otherTable: Any): Boolean {
-        if (otherTable is HashTable<*, *> && this.size == otherTable.size) {
-            for (i in 0..this.size - 1) {
+    fun equals2(otherTable: Any?): Boolean {
+
+        return if (otherTable is HashTable<*, *> && (this.size == otherTable.size)) {
+            for (i in 0 until this.size)
                 when {
-                    this.table[i].isEmpty() != otherTable.table[i].isEmpty() -> return false
-                    table[i].isNotEmpty() && this.table.sort() != otherTable.table.sort() -> return false
+                    this.table[i].isNullOrEmpty() != otherTable.table[i].isNullOrEmpty() -> return false
+                    else -> if (this.table.sort(0, size) != otherTable.table.sort(0, size)) return false
                 }
-            }
-            return true
-        } else
-            return false
+            true
+        } else false
     }
-
 
     /*
     hashObject of Int using hashcode() fun
-    I  think it's kinda OK...not great but it works
     */
     private fun hash(obj: Key): Int {
 
