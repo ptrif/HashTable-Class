@@ -1,7 +1,7 @@
 package ru.spbstu.polina
 
 import java.util.*
-
+import java.util.Comparator
 
 
 data class Pair<Key, T>(val key: Key, var item: T) //key&value pair
@@ -74,17 +74,33 @@ class HashTable<Key, T> {
     }
 
     //compare two HashTables
+/*
+    fun equals2(other: Any?): Boolean {
 
-    fun equals2(otherTable: Any?): Boolean {
-
-        return if (otherTable is HashTable<*, *> && (this.size == otherTable.size)) {
+        return if (other is HashTable<*, *> && (this.size == other.size)) {
             for (i in 0 until this.size)
                 when {
-                    this.table[i].isNullOrEmpty() != otherTable.table[i].isNullOrEmpty() -> return false
-                    else -> if (this.table.sort(0, size) != otherTable.table.sort(0, size)) return false
+                    this.table[i].isNullOrEmpty() != other.table[i].isNullOrEmpty() -> return false
+                    else -> if (this.table.sort(0, size) != other.table.sort(0, size)) return false
                 }
             true
         } else false
+    }
+    */
+
+    override fun equals(other: Any?): Boolean = (other is HashTable<*,*>
+            && other.size == this.size
+            && this.hashCode().compareTo(other.hashCode()) == 0 )
+
+    override fun hashCode(): Int {
+        var res = 0
+        for (i in 0 until this.size ) {
+            if (!table[i].isNullOrEmpty()) {
+                res += i*table.sumBy { i }
+
+            }
+        }
+        return res
     }
 
     /*

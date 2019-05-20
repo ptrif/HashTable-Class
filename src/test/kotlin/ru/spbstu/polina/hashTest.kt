@@ -15,8 +15,8 @@ class HashTableTest {
     var otherTable = HashTable<Int, Int>()
     var table1 = HashTable<Int, Int>()
     var table2 = HashTable<Int, Int>()
-    val tab = null
-    val tab1 = null
+    private val tab = null
+    private val tab1 = null
 
 
     @Test
@@ -74,7 +74,7 @@ class HashTableTest {
     }
 
     @Test
-    fun equals2() {
+    fun equals() {
         table.put(3, 10)
         table.put(4, 28)
         otherTable.put(1, 10)
@@ -84,8 +84,12 @@ class HashTableTest {
 
         table1
         table2
-        assertEquals(false, table1 == table2)
+        assertEquals(true, table1 == table2)
         assertEquals(true, tab == tab1)
+
+        val oth = Pair(3,6)
+
+        assertEquals(false, oth == table)
 
 
     }
