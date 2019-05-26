@@ -27,14 +27,14 @@ class HashTable<Key, T> {
         val index = hash(key)
         val arrayList = table[index]
         val elToAdd = Pair(key, item)
-
-        if (-1 == arrayList.indexOfFirst { it.key == key }) {
+        val c = arrayList.indexOfFirst { it.key == key }
+        if (-1 == c) {
 
             arrayList.add(elToAdd)
             size++
 
         } else {
-            val c = arrayList.indexOfFirst { it.key == key }
+
             arrayList[c].item = elToAdd.item
         }
     }
@@ -75,16 +75,38 @@ class HashTable<Key, T> {
 
     //compare two HashTables
 
-    override fun equals(other: Any?): Boolean = (other is HashTable<*,*>
-                                                       && other.size == this.size
-                                                       && this.hashCode().compareTo(other.hashCode()) == 0 )
+    override fun equals(other: Any?): Boolean {
+
+
+        if (other is HashTable<*, *> && this.size == other.size) {
+            for (i in 0 until this.size) {
+                val a = this.table[i] //buck 1
+                val a2 = other.table[i] //buck 2
+                if (a.isNullOrEmpty() != a2.isNullOrEmpty()) return false
+                else {
+                    if (!a.isNullOrEmpty()) {//if not empty then
+                        for (j in a) {
+                            val sortedItems = a.sortedBy { it.item == j.item }
+
+                              for (j2 in a2) {
+                                val sortedItems2 = a2.sortedBy { it.item == j2.item }
+                                return sortedItems == sortedItems2
+                            }
+                        }
+                    }
+                }
+
+            }
+            return true
+        } else return false
+    }
 
 
     override fun hashCode(): Int {
         var res = 0
-        for (i in 0 until this.size ) {
+        for (i in 0 until this.size) {
             if (!table[i].isNullOrEmpty()) {
-                res += i*table.sumBy { i }
+                res += i * table.sumBy { it.hashCode() }
 
             }
         }

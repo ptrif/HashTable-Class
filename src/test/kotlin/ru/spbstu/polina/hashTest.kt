@@ -78,14 +78,18 @@ class HashTableTest {
         table.put(3, 10)
         table.put(4, 28)
         otherTable.put(1, 10)
-        otherTable.put(14, 15)
+        otherTable.put(14, 2)
+
         assertEquals(false, table == otherTable)
         assertEquals(true, table != otherTable)
 
-        table1
-        table2
+        table1 = table2
+
         assertEquals(true, table1 == table2)
-        assertEquals(true, tab == tab1)
+        table1.put(1, 44)
+        assertEquals(false, table == table1)
+        table2.put(2,15)
+        assertEquals(false, table1==table2) //в первом случае проходит, в этом нет
 
         val oth = Pair(3,6)
 
