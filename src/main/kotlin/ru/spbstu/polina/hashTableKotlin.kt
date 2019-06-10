@@ -5,7 +5,6 @@ import java.util.*
 data class Pair<Key, T>(val key: Key, var item: T)
 
 class HashTable<Key, T> {
-
     private var length = 16
     var size = 0
     private val table = Array<ArrayList<Pair<Key, T>>>(length) {
@@ -70,8 +69,10 @@ class HashTable<Key, T> {
             for (i in 0 until this.size) {
                 val bucket = table[i].toTypedArray()
                 val otherBucket = other.table[i].toTypedArray()
-                if (!bucket.isNullOrEmpty())
+
+                if (!bucket.isNullOrEmpty()) {
                     res = bucket contentDeepEquals otherBucket
+                }
             }
         }
         return res
@@ -83,8 +84,9 @@ class HashTable<Key, T> {
     override fun hashCode(): Int {
         var res = 0
         for (i in 0 until this.size) {
-            if (!table[i].isNullOrEmpty())
-                res += i*table[i].sumBy { it.hashCode() }
+            if (!table[i].isNullOrEmpty()) {
+                res += i * table[i].sumBy { it.hashCode() }
+            }
         }
         return res
     }
@@ -98,6 +100,5 @@ class HashTable<Key, T> {
         val intObject = obj.hashCode()
         return intObject % length
     }
-
 
 }
