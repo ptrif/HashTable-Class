@@ -71,7 +71,7 @@ class HashTable<Key, T> {
                 val otherBucket = other.table[i].toTypedArray()
 
                 if (!bucket.isNullOrEmpty()) {
-                    res = bucket contentDeepEquals otherBucket
+                    res = bucket contentDeepEquals  otherBucket
                 }
             }
         }

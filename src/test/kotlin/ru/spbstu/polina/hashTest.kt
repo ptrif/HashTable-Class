@@ -1,6 +1,7 @@
 package ru.spbstu.polina
 
 import org.junit.Test
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -76,6 +77,20 @@ class HashTableTest {
         assertEquals(false, oth == table)
         assertEquals(false, oth == tab)
 
+        //this test proves that bucket.sort() is not needed when we use contentDeepEquals with arrays in Kotlin
+        var aTable = HashTable<Int,Int>()
+        var bTable = HashTable<Int,Int>()
+
+        aTable.put(15,16)
+        aTable.put(1,10)
+        aTable.put(13,11)
+        aTable.put(3,14)
+        bTable.put(13,11)
+        bTable.put(1,10)
+        bTable.put(15,16)
+        bTable.put(3,14)
+
+        assertEquals(true,aTable == bTable)
 
     }
 
